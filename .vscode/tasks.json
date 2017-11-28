@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "taskName": "build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/SL.WebExperience.Test.Web/SL.WebExperience.Test.Web.csproj"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
