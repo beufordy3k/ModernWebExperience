@@ -37,14 +37,11 @@ namespace SL.WebExperience.Test.Web.Controllers
                 ? MaxPageSize
                 : pageSize;
 
-            var skipCount = pageSize * (pageNumber - 1);
-
-            skipCount = skipCount > MaxRecordCount ? MaxRecordCount - pageSize : skipCount;
-
             var query = GetFilteredQuery(_context.Asset, queryParams);
 
             //TODO: Convert to service
             var result = await query
+                .Where(a => !a.IsDeleted)
                 .Include(a => a.Country)
                 .Include(a => a.MimeType)
                 .ToPagedResult(pageNumber, pageSize, MaxRecordCount);
@@ -199,7 +196,10 @@ namespace SL.WebExperience.Test.Web.Controllers
                 return NotFound();
             }
 
-            _context.Asset.Remove(asset);
+            asset.IsDeleted = true;
+            _context.Entry(asset).State = EntityState.Modified;
+            
+            //_context.Asset.Remove(asset);
             await _context.SaveChangesAsync();
 
             return Ok(asset);

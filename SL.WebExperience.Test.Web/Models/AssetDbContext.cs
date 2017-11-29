@@ -55,6 +55,8 @@ namespace SL.WebExperience.Test.Web.Models
                     .HasMaxLength(25)
                     .IsUnicode(false);
 
+                entity.Property(e => e.IsDeleted).HasDefaultValueSql("(0)");
+
                 entity.HasOne(d => d.Country);
                     //.WithMany(p => p.Asset)
                     //.HasForeignKey(d => d.CountryId)

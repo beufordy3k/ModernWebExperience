@@ -16,6 +16,7 @@ namespace SL.WebExperience.Test.Web.Models
         public string Description { get; set; }
         public int MimeTypeId { get; set; }
         public int CountryId { get; set; }
+        public bool IsDeleted { get; set; }
 
         public Country Country { get; set; }
         public MimeType MimeType { get; set; }
