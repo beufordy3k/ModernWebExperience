@@ -1,9 +1,11 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
 using SL.WebExperience.Test.Web.Extensions;
 using SL.WebExperience.Test.Web.Models;
 
@@ -26,10 +28,10 @@ namespace SL.WebExperience.Test.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAssets(FilteringParams filteringParams = null, PagingParams pagingParams = null)
+        public async Task<IActionResult> GetAssets(QueryParams queryParams = null)
         {
-            var pageSize = pagingParams?.PageSize ?? DefaultPageSize;
-            var pageNumber = pagingParams?.PageNumber ?? DefaultPageNumber;
+            var pageSize = queryParams?.PageSize ?? DefaultPageSize;
+            var pageNumber = queryParams?.PageNumber ?? DefaultPageNumber;
 
             pageSize = pageSize > MaxPageSize
                 ? MaxPageSize
@@ -39,7 +41,7 @@ namespace SL.WebExperience.Test.Web.Controllers
 
             skipCount = skipCount > MaxRecordCount ? MaxRecordCount - pageSize : skipCount;
 
-            var query = GetFilteredQuery(_context.Asset, filteringParams);
+            var query = GetFilteredQuery(_context.Asset, queryParams);
 
             //TODO: Convert to service
             var result = await query
@@ -61,8 +63,12 @@ namespace SL.WebExperience.Test.Web.Controllers
                     PageSize = pageSize,
                     PageNumber = pageNumber,
                     LastPageNumber = result.TotalPages,
-                    NextPageLink = result.HasNextPage ? $"pageNumber={pageNumber+1}&pageSize={pageSize}" : null, //TODO: Need Url builder
-                    PreviousPageLink = result.HasPreviousPage ? $"pageNumber={pageNumber-1}&pageSize={pageSize}" : null,
+                    NextPageLink = result.HasNextPage ? 
+                        queryParams.ToUrl(Request.GetUri(), pageNumber + 1, pageSize)
+                        : null,
+                    PreviousPageLink = result.HasPreviousPage ?
+                        queryParams.ToUrl(Request.GetUri(), pageNumber - 1, pageSize) 
+                        : null,
                     PageStartRecordNumber = skipCount + 1,
                     PageEndRecordNumber = endRecordNumber
                 },
@@ -72,21 +78,21 @@ namespace SL.WebExperience.Test.Web.Controllers
             return Ok(output);
         }
 
-        private static IQueryable<Asset> GetFilteredQuery(IQueryable<Asset> assets, FilteringParams filteringParams)
+        private static IQueryable<Asset> GetFilteredQuery(IQueryable<Asset> assets, QueryParams queryParams)
         {
-            if (filteringParams == null)
+            if (queryParams == null)
             {
                 return assets;
             }
 
-            if (filteringParams.Country != null)
+            if (queryParams.Country != null)
             {
-                assets = assets.Where(a => a.CountryId == filteringParams.Country.Value);
+                assets = assets.Where(a => a.CountryId == queryParams.Country.Value);
             }
 
-            if (filteringParams.MimeType != null)
+            if (queryParams.MimeType != null)
             {
-                assets = assets.Where(a => a.MimeTypeId == filteringParams.MimeType.Value);
+                assets = assets.Where(a => a.MimeTypeId == queryParams.MimeType.Value);
             }
 
             return assets;

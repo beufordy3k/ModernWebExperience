@@ -17,6 +17,7 @@
     <None Remove="wwwroot\dist\**" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Flurl" Version="2.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.1" />

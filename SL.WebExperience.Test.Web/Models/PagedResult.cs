@@ -10,7 +10,7 @@ namespace SL.WebExperience.Test.Web.Models
     public class PagedResult<T>
     {
 
-        public int PageNumber { get; }
+        public int PageNumber { get; private set; }
         public int PageSize { get; }
 
         public int TotalItems { get; private set; }
@@ -34,8 +34,22 @@ namespace SL.WebExperience.Test.Web.Models
                 .Take(maxResultCount)
                 .CountAsync();
 
+            var skipCount = PageSize * (PageNumber - 1);
+
+            if (skipCount > TotalItems)
+            {
+                skipCount = TotalItems - PageSize; //if request takes us beyond the end of the results
+                PageNumber = TotalPages;
+
+                if (skipCount < 0)
+                {
+                    skipCount = 0;
+                    PageNumber = 1;
+                }
+            }
+
             Items = await source
-                .Skip(PageSize * (PageNumber - 1))
+                .Skip(skipCount)
                 .Take(PageSize)
                 .ToListAsync();
         }
