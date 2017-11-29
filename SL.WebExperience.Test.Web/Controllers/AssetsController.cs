@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SL.WebExperience.Test.Web.Extensions;
 using SL.WebExperience.Test.Web.Models;
 
 namespace SL.WebExperience.Test.Web.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Assets")]
+    [Route("api/[controller]")]
     public class AssetsController : Controller
     {
+        private const int DefaultPageSize = 10;
+        private const int DefaultPageNumber = 1;
+        private const int MaxPageSize = 100;
+        private const int MaxRecordCount = 2500;
+
         private readonly AssetDbContext _context;
 
         public AssetsController(AssetDbContext context)
@@ -20,14 +25,73 @@ namespace SL.WebExperience.Test.Web.Controllers
             _context = context;
         }
 
-        // GET: api/Assets
         [HttpGet]
-        public IEnumerable<Asset> GetAsset()
+        public async Task<IActionResult> GetAssets(FilteringParams filteringParams = null, PagingParams pagingParams = null)
         {
-            return _context.Asset;
+            var pageSize = pagingParams?.PageSize ?? DefaultPageSize;
+            var pageNumber = pagingParams?.PageNumber ?? DefaultPageNumber;
+
+            pageSize = pageSize > MaxPageSize
+                ? MaxPageSize
+                : pageSize;
+
+            var skipCount = pageSize * (pageNumber - 1);
+
+            skipCount = skipCount > MaxRecordCount ? MaxRecordCount - pageSize : skipCount;
+
+            var query = GetFilteredQuery(_context.Asset, filteringParams);
+
+            //TODO: Convert to service
+            var result = await query
+                .Include(a => a.Country) //TODO: Remove nested asset record
+                .Include(a => a.MimeType) //TODO: Remove nested asset record
+                .ToPagedResult(pageNumber, pageSize, MaxRecordCount);
+
+            var totalItemCount = result.TotalItems;
+
+            var endRecordNumber = skipCount + pageSize;
+
+            endRecordNumber = endRecordNumber > totalItemCount ? totalItemCount : endRecordNumber;
+
+            var output = new AssetOutputModel
+            {
+                Paging = new Pagination
+                {
+                    TotalItems = totalItemCount,
+                    PageSize = pageSize,
+                    PageNumber = pageNumber,
+                    LastPageNumber = result.TotalPages,
+                    NextPageLink = result.HasNextPage ? $"pageNumber={pageNumber+1}&pageSize={pageSize}" : null, //TODO: Need Url builder
+                    PreviousPageLink = result.HasPreviousPage ? $"pageNumber={pageNumber-1}&pageSize={pageSize}" : null,
+                    PageStartRecordNumber = skipCount + 1,
+                    PageEndRecordNumber = endRecordNumber
+                },
+                Data = result.Items
+            };
+
+            return Ok(output);
         }
 
-        // GET: api/Assets/5
+        private static IQueryable<Asset> GetFilteredQuery(IQueryable<Asset> assets, FilteringParams filteringParams)
+        {
+            if (filteringParams == null)
+            {
+                return assets;
+            }
+
+            if (filteringParams.Country != null)
+            {
+                assets = assets.Where(a => a.CountryId == filteringParams.Country.Value);
+            }
+
+            if (filteringParams.MimeType != null)
+            {
+                assets = assets.Where(a => a.MimeTypeId == filteringParams.MimeType.Value);
+            }
+
+            return assets;
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsset([FromRoute] int id)
         {
@@ -46,7 +110,6 @@ namespace SL.WebExperience.Test.Web.Controllers
             return Ok(asset);
         }
 
-        // PUT: api/Assets/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsset([FromRoute] int id, [FromBody] Asset asset)
         {
@@ -81,7 +144,6 @@ namespace SL.WebExperience.Test.Web.Controllers
             return NoContent();
         }
 
-        // POST: api/Assets
         [HttpPost]
         public async Task<IActionResult> PostAsset([FromBody] Asset asset)
         {
@@ -110,7 +172,6 @@ namespace SL.WebExperience.Test.Web.Controllers
             return CreatedAtAction("GetAsset", new { id = asset.AssetId }, asset);
         }
 
-        // DELETE: api/Assets/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsset([FromRoute] int id)
         {

@@ -1,0 +1,113 @@
+<template>
+    <div>
+        <h1>Assets</h1>
+
+        <p>Data from the Asset data store.</p>
+
+        <table v-if="assets.length" class="table">
+            <thead>
+            <tr>
+                <th>Created When</th>
+                <th>Updated When</th>
+                <th>Version</th>
+                <th>File Name</th>
+                <th>Created By</th>
+                <th>Email</th>
+                <th>Description</th>
+                <th>Country</th>
+                <th>Mime Type</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="item in assets">
+                <td>{{ item.createdWhen }}</td>
+                <td>{{ item.updatedWhen }}</td>
+                <td>{{ item.version }}</td>
+                <td>{{ item.fileName }}</td>
+                <td>{{ item.createdBy }}</td>
+                <td>{{ item.email }}</td>
+                <td>{{ item.description }}</td>
+                <td>{{ item.country.name }}</td>
+                <td>{{ item.mimeType.name }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+        <p v-else><em>Loading...</em></p>
+    </div>
+    
+    <!--<table class="table">
+        <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].CreatedWhen)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].UpdatedWhen)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].Version)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].FileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].CreatedBy)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].Country)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Asset[0].MimeType)
+            </th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.Asset) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedWhen)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UpdatedWhen)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Version)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FileName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MimeType.Name)
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.AssetId">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.AssetId">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.AssetId">Delete</a>
+            </td>
+        </tr>
+        }
+        </tbody>
+    </table>-->
+</template>
+
+<script src="./assets.ts"></script>
