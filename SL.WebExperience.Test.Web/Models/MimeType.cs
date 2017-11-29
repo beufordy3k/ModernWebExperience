@@ -7,7 +7,7 @@ namespace SL.WebExperience.Test.Web.Models
     {
         public MimeType()
         {
-            Asset = new HashSet<Asset>();
+            //Asset = new HashSet<Asset>();
         }
 
         public DateTimeOffset CreatedWhen { get; set; }
@@ -17,6 +17,6 @@ namespace SL.WebExperience.Test.Web.Models
         public string Name { get; set; }
         public Guid MimeTypeKey { get; set; }
 
-        public ICollection<Asset> Asset { get; set; }
+        //public ICollection<Asset> Asset { get; set; }
     }
 }

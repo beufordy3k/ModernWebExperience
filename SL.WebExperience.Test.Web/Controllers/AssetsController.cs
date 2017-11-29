@@ -45,13 +45,16 @@ namespace SL.WebExperience.Test.Web.Controllers
 
             //TODO: Convert to service
             var result = await query
-                .Include(a => a.Country) //TODO: Remove nested asset record
-                .Include(a => a.MimeType) //TODO: Remove nested asset record
+                .Include(a => a.Country)
+                .Include(a => a.MimeType)
                 .ToPagedResult(pageNumber, pageSize, MaxRecordCount);
 
             var totalItemCount = result.TotalItems;
 
-            var endRecordNumber = skipCount + pageSize;
+            pageNumber = result.PageNumber;
+
+            var startRecordNumber = (pageNumber - 1) * pageSize + 1;
+            var endRecordNumber = (pageNumber - 1) * pageSize + pageSize;
 
             endRecordNumber = endRecordNumber > totalItemCount ? totalItemCount : endRecordNumber;
 
@@ -69,7 +72,7 @@ namespace SL.WebExperience.Test.Web.Controllers
                     PreviousPageLink = result.HasPreviousPage ?
                         queryParams.ToUrl(Request.GetUri(), pageNumber - 1, pageSize) 
                         : null,
-                    PageStartRecordNumber = skipCount + 1,
+                    PageStartRecordNumber = startRecordNumber,
                     PageEndRecordNumber = endRecordNumber
                 },
                 Data = result.Items
@@ -106,7 +109,11 @@ namespace SL.WebExperience.Test.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var asset = await _context.Asset.SingleOrDefaultAsync(m => m.AssetId == id);
+            var asset = await _context.Asset
+                .Include(a => a.Country)
+                .Include(a => a.MimeType)
+                .SingleOrDefaultAsync(m => m.AssetId == id);
+                
 
             if (asset == null)
             {
