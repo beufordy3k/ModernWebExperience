@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import { Vuetable, VuetablePagination } from 'vuetable-2';
+import VueRouter from 'vue-router';
 
 Vue.use(Vuetable);
 
@@ -19,7 +20,8 @@ interface IPaginationData {
 ({
     components: {
         Vuetable,
-        'vuetable-pagination': VuetablePagination
+        'vuetable-pagination': VuetablePagination,
+        VueRouter
     }
 })
 export default class AssetsComponent extends Vue {
@@ -65,9 +67,17 @@ export default class AssetsComponent extends Vue {
         this.$refs.vuetable.changePage(page);
     }
 
+    editRow(rowData : any) {
+        alert('You clicked edit on' + JSON.stringify(rowData));
+        this.$router.push('/assetmanagement/edit'); //pass data
+    }
+    
+    deleteRow(rowData : any) {
+        alert('You clicked delete on' + JSON.stringify(rowData));
+        //delete record
+        //reload data
+    }
+
     mounted() {
-        //this.pagination = this.$refs.pagination;
-        //console.log('pagination object: ' + this.$refs.pagination);
-        //console.log('pagination object2: ' + Vuetable.$refs.pagination);
     }
 }

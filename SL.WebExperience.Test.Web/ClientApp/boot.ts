@@ -7,7 +7,15 @@ Vue.use(VueRouter);
 
 const routes = [
     { path: '/', component: require('./components/home/home.vue.html') },
-    { path: '/assetmanagement', component: require('./components/assetmanagement/assets.vue.html') }
+    {
+        path: '/assetmanagement',
+        component: require('./components/assetmanagement/assethome.vue.html'),
+        children: [
+            { path: '', component: require('./components/assetmanagement/assets.vue.html') },
+            { path: 'new', component: require('./components/assetmanagement/newasset.vue.html') },
+            { path: 'edit', component: require('./components/assetmanagement/editasset.vue.html') }
+        ]
+    }
 ];
 
 new Vue({
