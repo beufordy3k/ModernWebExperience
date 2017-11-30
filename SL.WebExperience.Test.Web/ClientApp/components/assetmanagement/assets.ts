@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
-import { Vuetable, VuetablePagination } from 'vuetable-2';
+import { Vuetable, VuetablePagination, VuetablePaginationInfo } from 'vuetable-2';
 import VueRouter from 'vue-router';
 
 Vue.use(Vuetable);
@@ -21,6 +21,7 @@ interface IPaginationData {
     components: {
         Vuetable,
         'vuetable-pagination': VuetablePagination,
+        VuetablePaginationInfo,
         VueRouter
     }
 })
@@ -61,6 +62,7 @@ export default class AssetsComponent extends Vue {
 
     onPaginationData(paginationData : IPaginationData) {
         this.$refs.pagination.setPaginationData(paginationData);
+        this.$refs.paginationInfo.setPaginationData(paginationData);
     }
 
     onChangePage(page : any) {
