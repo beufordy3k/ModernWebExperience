@@ -27,6 +27,14 @@ namespace SL.WebExperience.Test.Web
                 .AddJsonOptions(options =>
                     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin();
+                    });
+            });
 
             //TODO: Pull from Azure KeyVault using MSI (Managed Service Identity) on app service
             services.AddDbContext<AssetDbContext>(options =>
@@ -52,6 +60,8 @@ namespace SL.WebExperience.Test.Web
             }
 
             app.UseStaticFiles();
+
+            app.UseCors("AllowAllOrigins");
 
             app.UseMvc(routes =>
             {

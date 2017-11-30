@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /SL.WebExperience.Test.Web/appsettings.Development.json
+/SL.WebExperience.Test.Web/wwwroot/dist
