@@ -1,6 +1,7 @@
 ﻿import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import VueEvents from 'vue-events'
+//import TypeAhead from 'vue2-typeahead'
 
 Vue.use(VueEvents);
 

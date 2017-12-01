@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace SL.WebExperience.Test.Web.Models
 {
@@ -13,6 +15,7 @@ namespace SL.WebExperience.Test.Web.Models
         public DateTimeOffset CreatedWhen { get; set; }
         public DateTimeOffset UpdatedWhen { get; set; }
         public string Version { get; set; }
+        [JsonProperty("id")]
         public int CountryId { get; set; }
         public string Name { get; set; }
         public Guid CountryKey { get; set; }

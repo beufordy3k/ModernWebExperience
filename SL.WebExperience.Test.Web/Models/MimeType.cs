@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace SL.WebExperience.Test.Web.Models
 {
@@ -13,6 +14,7 @@ namespace SL.WebExperience.Test.Web.Models
         public DateTimeOffset CreatedWhen { get; set; }
         public DateTimeOffset UpdatedWhen { get; set; }
         public string Version { get; set; }
+        [JsonProperty("id")]
         public int MimeTypeId { get; set; }
         public string Name { get; set; }
         public Guid MimeTypeKey { get; set; }
