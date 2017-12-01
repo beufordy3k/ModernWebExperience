@@ -20,7 +20,9 @@ module.exports = (env) => {
                 'vue-router',
                 'vuetable-2',
                 'semantic-ui-css/semantic.css',
-                'vue-events'
+                'vue-events',
+                'vue-form-generator',
+                'axios'
             ],
         },
         module: {

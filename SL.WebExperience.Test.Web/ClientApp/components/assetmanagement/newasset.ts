@@ -1,17 +1,21 @@
 ﻿import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
-import VueFormGenerator from 'vue-form-generator';
+import { component as VueFormGenerator, validators } from 'vue-form-generator';
+import axios from 'axios'
 
-Vue.use(VueFormGenerator);
+interface ICountryData {
+    id: number;
+    name: string;
+}
 
 @Component({
     components: {
-        'vue-form-generator': VueFormGenerator.component
+        'vue-form-generator': VueFormGenerator
     }
 })
 export default class NewAssetComponent extends Vue {
     model: {};
-    schema: {};
+    schema: any;
     formOptions: {};
 
     countries: Array<any>;
@@ -23,6 +27,8 @@ export default class NewAssetComponent extends Vue {
         this.model = {};
         this.formOptions = {};
 
+        this.countries = [];
+        
         this.schema = {
             fields: [
                 {
@@ -54,7 +60,7 @@ export default class NewAssetComponent extends Vue {
                     model: 'email',
                     placeholder: 'Email Address',
                     required: true,
-                    validator: VueFormGenerator.validators.email
+                    validator: validators.email
                 }, {
                     type: 'textArea',
                     label: 'Description',
@@ -63,12 +69,23 @@ export default class NewAssetComponent extends Vue {
                     max: 500,
                     rows: 4,
                     required: false,
-                    validator: VueFormGenerator.validators.string
+                    validator: validators.string
+                }, {
+                    type: 'select',
+                    label: 'Country',
+                    model: 'countryId',
+                    values: this.countries,
+                    validator: validators.required
                 }
             ]
         };
 
+        this.getCountries((data) => {
+            this.schema.fields[5].values = data; //TODO: Fix this, it's a bad way to go.
+        });
+
         /*
+        this.schema.fields[5].values = this.countries;
        , {
            type: 'input',
            inputType: 'password',
@@ -98,21 +115,29 @@ export default class NewAssetComponent extends Vue {
        */
     }
 
+    beforeMount() {
+        console.log('newasset before mount');
+    }        
+        
     created() {
-        this.getCountries();
+        console.log('newasset created');
     }
 
-    getCountries() {
-        try {
-            //let response = await this.$http.get('/api/Countries'); 
+    mounted() {
+        console.log('newasset mount');
+    }
 
+    getCountries(callback: (data: any) => void) {
+        try {
             //TODO: Cache these
-            //axios.get('/api/Countries')
-            //    .then(response => {
-            //        console.log(response.data);
-            //        this.countries = response.data;
-            //    })
-            //    .catch((e) => console.log(e));
+            axios.get('/api/Countries')
+               .then(response => {
+                   //console.log(response.data);
+                   console.log("retrieved countries data: " + response.data.length)
+                   callback(response.data);
+
+               })
+               .catch((e) => console.log(e));
         }
         catch (error) {
             console.log(error);
