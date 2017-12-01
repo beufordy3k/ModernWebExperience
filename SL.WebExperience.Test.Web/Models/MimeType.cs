@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SL.WebExperience.Test.Web.Models
 {
-    public partial class MimeType
+    public partial class MimeType : INamedEntity
     {
         public MimeType()
         {

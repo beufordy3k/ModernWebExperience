@@ -2,8 +2,10 @@ import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import { Vuetable, VuetablePagination, VuetablePaginationInfo } from 'vuetable-2';
 import VueRouter from 'vue-router';
+import VueEvents from 'vue-events';
 
 Vue.use(Vuetable);
+Vue.use(VueEvents);
 
 interface IPaginationData {
     total: number;
@@ -22,12 +24,16 @@ interface IPaginationData {
         Vuetable,
         'vuetable-pagination': VuetablePagination,
         VuetablePaginationInfo,
-        VueRouter
+        VueRouter,
+        'filter-bar': require('../shared/filterbar.vue.html')
     }
 })
 export default class AssetsComponent extends Vue {
     $refs: any;
     fields: Array<any>;
+    queryParams: object;
+    moreParams: object;
+    sortOrder: Array<any>;
 
     constructor() {
         super();
@@ -58,6 +64,17 @@ export default class AssetsComponent extends Vue {
             },
             '__slot:actions'
         ];
+
+        this.queryParams = { sort: 'sort', page: 'pageNumber', perPage: 'pageSize' };
+
+        this.moreParams = {};
+        this.sortOrder = [
+            {
+                field: 'fileName',
+                sortField: 'default',
+                direction: 'asc'
+            }
+        ];
     }
 
     onPaginationData(paginationData : IPaginationData) {
@@ -80,6 +97,28 @@ export default class AssetsComponent extends Vue {
         //reload data
     }
 
+    onFilterSet(filterText : string) {
+        console.log('filter-set', filterText);
+        this.moreParams = {
+            'country': filterText
+        }
+
+        this.$nextTick(() => {
+
+            this.$refs.vuetable.refresh();
+        });
+    }
+
+    onFilterReset() {
+        console.log('filter-reset');
+
+        this.moreParams = {};
+
+        this.$nextTick(() => this.$refs.vuetable.refresh());
+    }
+
     mounted() {
+        this.$events.$on('filter-set', eventData => this.onFilterSet(eventData));
+        this.$events.$on('filter-reset', e => this.onFilterReset());
     }
 }

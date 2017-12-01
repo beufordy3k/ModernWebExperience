@@ -9,12 +9,15 @@
                 <span class="glyphicon glyphicon-plus"></span> Create New
             </button>
         </router-link>
-
+        
+        <filter-bar></filter-bar>
 
         <vuetable ref="vuetable"
                   api-url="https://slwebtest.azurewebsites.net/api/Assets"
                   :fields="fields"
-                  :query-params="{ page: 'pageNumber', perPage: 'pageSize' }"
+                  :query-params="queryParams"
+                  :sort-order="sortOrder"
+                  :append-params="moreParams"
                   pagination-path="paging"
                   @vuetable:pagination-data="onPaginationData">
             <template slot="actions" scope="props">

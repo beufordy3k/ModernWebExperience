@@ -78,26 +78,6 @@ namespace SL.WebExperience.Test.Web.Controllers
             return Ok(output);
         }
 
-        private static IQueryable<Asset> GetFilteredQuery(IQueryable<Asset> assets, QueryParams queryParams)
-        {
-            if (queryParams == null)
-            {
-                return assets;
-            }
-
-            if (queryParams.Country != null)
-            {
-                assets = assets.Where(a => a.CountryId == queryParams.Country.Value);
-            }
-
-            if (queryParams.MimeType != null)
-            {
-                assets = assets.Where(a => a.MimeTypeId == queryParams.MimeType.Value);
-            }
-
-            return assets;
-        }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsset([FromRoute] int id)
         {
@@ -203,6 +183,26 @@ namespace SL.WebExperience.Test.Web.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(asset);
+        }
+
+        private static IQueryable<Asset> GetFilteredQuery(IQueryable<Asset> assets, QueryParams queryParams)
+        {
+            if (queryParams == null)
+            {
+                return assets;
+            }
+
+            if (queryParams.Country != null)
+            {
+                assets = assets.Where(a => a.CountryId == queryParams.Country.Value);
+            }
+
+            if (queryParams.MimeType != null)
+            {
+                assets = assets.Where(a => a.MimeTypeId == queryParams.MimeType.Value);
+            }
+
+            return assets;
         }
 
         private bool AssetExists(int id)

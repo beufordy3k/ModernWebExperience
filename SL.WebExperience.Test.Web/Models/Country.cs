@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SL.WebExperience.Test.Web.Models
 {
-    public partial class Country
+    public partial class Country : INamedEntity
     {
         public Country()
         {
