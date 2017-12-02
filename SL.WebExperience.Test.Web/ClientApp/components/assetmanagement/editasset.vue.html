@@ -1,0 +1,15 @@
+﻿<template>
+    <div>
+        <h1>Edit Asset</h1>
+
+        <p>Update an existing Asset.</p>
+        
+
+        <form @submit.prevent="updateAsset">
+                <asset-form ref="form" :initial-model="model" mode="edit"></asset-form>
+                <button class="btn btn-primary btn-sm">Update Asset</button>
+            </form>
+        </div>
+</template>
+
+<script src="./editasset.ts"></script>

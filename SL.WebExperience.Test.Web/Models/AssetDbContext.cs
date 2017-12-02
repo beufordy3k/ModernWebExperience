@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace SL.WebExperience.Test.Web.Models
 {
@@ -14,18 +12,14 @@ namespace SL.WebExperience.Test.Web.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer(@"Server=tcp:rh-main.database.windows.net,1433;Initial Catalog=slweb;Persist Security Info=False;User ID=;Password=;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
-            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Asset>(entity =>
             {
-                entity.Property(e => e.AssetId).ValueGeneratedNever();
+                entity.Property(e => e.AssetId)
+                .UseSqlServerIdentityColumn();
 
                 entity.Property(e => e.AssetKey).HasDefaultValueSql("(newid())");
 
@@ -59,17 +53,19 @@ namespace SL.WebExperience.Test.Web.Models
                     .HasMaxLength(25)
                     .IsUnicode(false);
 
-                entity.HasOne(d => d.Country)
-                    .WithMany(p => p.Asset)
-                    .HasForeignKey(d => d.CountryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Asset_Country");
+                entity.Property(e => e.IsDeleted).HasDefaultValueSql("(0)");
 
-                entity.HasOne(d => d.MimeType)
-                    .WithMany(p => p.Asset)
-                    .HasForeignKey(d => d.MimeTypeId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Asset_MimeType");
+                entity.HasOne(d => d.Country);
+                    //.WithMany(p => p.Asset)
+                    //.HasForeignKey(d => d.CountryId)
+                    //.OnDelete(DeleteBehavior.ClientSetNull)
+                    //.HasConstraintName("FK_Asset_Country");
+
+                entity.HasOne(d => d.MimeType);
+                    //.WithMany(p => p.Asset)
+                    //.HasForeignKey(d => d.MimeTypeId)
+                    //.OnDelete(DeleteBehavior.ClientSetNull)
+                    //.HasConstraintName("FK_Asset_MimeType");
             });
 
             modelBuilder.Entity<Country>(entity =>

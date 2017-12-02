@@ -17,7 +17,13 @@ module.exports = (env) => {
                 'isomorphic-fetch',
                 'jquery',
                 'vue',
-                'vue-router'
+                'vue-router',
+                'vuetable-2',
+                'semantic-ui-css/semantic.css',
+                'vue-events',
+                'vue-form-generator',
+                'axios',
+                'vue-uuid'
             ],
         },
         module: {

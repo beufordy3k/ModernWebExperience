@@ -1,18 +1,26 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+
+using SL.WebExperience.Test.Web.Extensions;
 using SL.WebExperience.Test.Web.Models;
 
 namespace SL.WebExperience.Test.Web.Controllers
 {
     [Produces("application/json")]
-    [Route("api/Assets")]
+    [Route("api/[controller]")]
     public class AssetsController : Controller
     {
+        private const int DefaultPageSize = 10;
+        private const int DefaultPageNumber = 1;
+        private const int MaxPageSize = 100;
+        private const int MaxRecordCount = 2500;
+
         private readonly AssetDbContext _context;
 
         public AssetsController(AssetDbContext context)
@@ -20,14 +28,57 @@ namespace SL.WebExperience.Test.Web.Controllers
             _context = context;
         }
 
-        // GET: api/Assets
         [HttpGet]
-        public IEnumerable<Asset> GetAsset()
+        public async Task<IActionResult> GetAssets(QueryParams queryParams = null)
         {
-            return _context.Asset;
+            var pageSize = queryParams?.PageSize ?? DefaultPageSize;
+            var pageNumber = queryParams?.PageNumber ?? DefaultPageNumber;
+
+            pageSize = pageSize > MaxPageSize
+                ? MaxPageSize
+                : pageSize;
+
+            var query = GetFilteredQuery(_context.Asset, queryParams);
+
+            //TODO: Convert to service
+            var result = await query
+                .Where(a => !a.IsDeleted)
+                .Include(a => a.Country)
+                .Include(a => a.MimeType)
+                .ToPagedResult(pageNumber, pageSize, MaxRecordCount);
+
+            var totalItemCount = result.TotalItems;
+
+            pageNumber = result.PageNumber;
+
+            var startRecordNumber = (pageNumber - 1) * pageSize + 1;
+            var endRecordNumber = (pageNumber - 1) * pageSize + pageSize;
+
+            endRecordNumber = endRecordNumber > totalItemCount ? totalItemCount : endRecordNumber;
+
+            var output = new AssetOutputModel
+            {
+                Paging = new Pagination
+                {
+                    TotalItems = totalItemCount,
+                    PageSize = pageSize,
+                    PageNumber = pageNumber,
+                    LastPageNumber = result.TotalPages,
+                    NextPageLink = result.HasNextPage ? 
+                        queryParams.ToUrl(Request.GetUri(), pageNumber + 1, pageSize)
+                        : null,
+                    PreviousPageLink = result.HasPreviousPage ?
+                        queryParams.ToUrl(Request.GetUri(), pageNumber - 1, pageSize) 
+                        : null,
+                    PageStartRecordNumber = startRecordNumber,
+                    PageEndRecordNumber = endRecordNumber
+                },
+                Data = result.Items
+            };
+
+            return Ok(output);
         }
 
-        // GET: api/Assets/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetAsset([FromRoute] int id)
         {
@@ -36,7 +87,11 @@ namespace SL.WebExperience.Test.Web.Controllers
                 return BadRequest(ModelState);
             }
 
-            var asset = await _context.Asset.SingleOrDefaultAsync(m => m.AssetId == id);
+            var asset = await _context.Asset
+                .Include(a => a.Country)
+                .Include(a => a.MimeType)
+                .SingleOrDefaultAsync(m => m.AssetId == id);
+                
 
             if (asset == null)
             {
@@ -46,7 +101,6 @@ namespace SL.WebExperience.Test.Web.Controllers
             return Ok(asset);
         }
 
-        // PUT: api/Assets/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutAsset([FromRoute] int id, [FromBody] Asset asset)
         {
@@ -60,7 +114,10 @@ namespace SL.WebExperience.Test.Web.Controllers
                 return BadRequest();
             }
 
+            asset.UpdatedWhen = DateTimeOffset.Now;
+
             _context.Entry(asset).State = EntityState.Modified;
+            _context.Entry(asset).Property(p => p.CreatedWhen).IsModified = false;
 
             try
             {
@@ -81,7 +138,6 @@ namespace SL.WebExperience.Test.Web.Controllers
             return NoContent();
         }
 
-        // POST: api/Assets
         [HttpPost]
         public async Task<IActionResult> PostAsset([FromBody] Asset asset)
         {
@@ -110,7 +166,6 @@ namespace SL.WebExperience.Test.Web.Controllers
             return CreatedAtAction("GetAsset", new { id = asset.AssetId }, asset);
         }
 
-        // DELETE: api/Assets/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsset([FromRoute] int id)
         {
@@ -125,10 +180,33 @@ namespace SL.WebExperience.Test.Web.Controllers
                 return NotFound();
             }
 
-            _context.Asset.Remove(asset);
+            asset.IsDeleted = true;
+            _context.Entry(asset).State = EntityState.Modified;
+            
+            //_context.Asset.Remove(asset);
             await _context.SaveChangesAsync();
 
             return Ok(asset);
+        }
+
+        private static IQueryable<Asset> GetFilteredQuery(IQueryable<Asset> assets, QueryParams queryParams)
+        {
+            if (queryParams == null)
+            {
+                return assets;
+            }
+
+            if (queryParams.Country != null)
+            {
+                assets = assets.Where(a => a.CountryId == queryParams.Country.Value);
+            }
+
+            if (queryParams.MimeType != null)
+            {
+                assets = assets.Where(a => a.MimeTypeId == queryParams.MimeType.Value);
+            }
+
+            return assets;
         }
 
         private bool AssetExists(int id)

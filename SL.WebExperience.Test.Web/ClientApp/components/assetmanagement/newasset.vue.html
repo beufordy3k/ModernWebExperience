@@ -1,0 +1,14 @@
+﻿<template>
+    <div>
+        <h1>New Asset</h1>
+
+        <p>Create a new Asset.</p>
+        
+        <form @submit.prevent="createNewAsset">
+            <asset-form ref="form" :initial-model="model" mode="create"></asset-form>
+            <button class="btn btn-primary btn-sm">Create New Asset</button>
+        </form>
+    </div>
+</template>
+
+<script src="./newasset.ts"></script>

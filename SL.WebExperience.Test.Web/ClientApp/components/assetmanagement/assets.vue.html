@@ -1,0 +1,42 @@
+<template>
+    <div>
+        <h1>Assets</h1>
+
+        <p>Data from the Asset data store.</p>
+        
+        <div class="create-new">
+            <router-link to="/assetmanagement/new">
+                <button class="btn btn-success btn-sm" >
+                    <span class="glyphicon glyphicon-plus"></span> Create New
+                </button>
+            </router-link>
+        </div>
+        <!--<filter-bar></filter-bar>-->
+
+        <vuetable ref="vuetable"
+                  api-url="/api/Assets"
+                  :fields="fields"
+                  :query-params="queryParams"
+                  :sort-order="sortOrder"
+                  :append-params="moreParams"
+                  pagination-path="paging"
+                  @vuetable:pagination-data="onPaginationData">
+            <template slot="actions" scope="props">
+                <div class="table-button-container">
+                    <button class="btn btn-warning btn-sm" @click="editRow(props.rowData)">
+                        <span class="glyphicon glyphicon-pencil"></span> Edit</button>&nbsp;&nbsp;
+                    <button class="btn btn-danger btn-sm" @click="deleteRow(props.rowData)">
+                        <span class="glyphicon glyphicon-trash"></span> Delete</button>&nbsp;&nbsp;
+                </div>
+            </template>
+        </vuetable>
+        
+        <div class="vuetable-pagination ui basic segment grid">
+            <vuetable-pagination-info ref="paginationInfo"></vuetable-pagination-info>
+            <vuetable-pagination ref="pagination" @vuetable-pagination:change-page="onChangePage"></vuetable-pagination>
+        </div>
+    </div>
+</template>
+
+<style src="./assets.css" />
+<script src="./assets.ts"></script>
