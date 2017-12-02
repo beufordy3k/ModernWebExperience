@@ -5,7 +5,7 @@
         <p>Create a new Asset.</p>
         
         <form @submit.prevent="createNewAsset">
-            <vue-form-generator :schema="schema" :model="model" :options="formOptions"></vue-form-generator>
+            <asset-form ref="form" :initial-model="model" mode="create"></asset-form>
             <button class="btn btn-primary btn-sm">Create New Asset</button>
         </form>
     </div>
