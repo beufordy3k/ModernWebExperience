@@ -20,7 +20,7 @@ export default class EditAssetComponent extends Vue {
     }
 
     mounted() {
-        console.log('data: ' + this.id);
+        console.log(`data: ${this.id}`);
 
         this.getAsset(this.id);
     }
@@ -35,11 +35,11 @@ export default class EditAssetComponent extends Vue {
         }
 
         let self = this;
-        axios.get('/api/Assets/' + id)
+        axios.get(`/api/Assets/${id}`)
         .then(response => {
             self.modelData = response.data;
 
-            console.log("asset: " + JSON.stringify(this.model));
+            console.log(`asset: ${JSON.stringify(this.model)}`);
         })
         .catch(e => console.log(e));
     }
@@ -49,9 +49,9 @@ export default class EditAssetComponent extends Vue {
 
         let data = this.model as any;
 
-        axios.put('/api/Assets/' + data.assetId, data)
+        axios.put(`/api/Assets/${data.assetId}`, data)
         .then(response => {
-            console.log('Response: ' + response.status + ':' + response.statusText);
+            console.log(`Response: ${response.status}:${response.statusText}`);
             this.$router.push('/assetmanagement');
         })
         .catch(e => console.log(e));

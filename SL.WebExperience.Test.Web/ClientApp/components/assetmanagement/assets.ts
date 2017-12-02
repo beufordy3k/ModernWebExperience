@@ -88,13 +88,13 @@ export default class AssetsComponent extends Vue {
     }
 
     editRow(rowData : any) {
-        console.log('data: ' + JSON.stringify(rowData));
+        console.log(`data: ${JSON.stringify(rowData)}`);
         this.$router.push({name: 'edit-asset', params: {id: rowData.assetId}}); //pass data
     }
     
     deleteRow(rowData : any) {
-        let result = confirm('Are you sure you want to delete the ' + rowData.fileName + ' record?');
-        console.log('Delete Record: ' + result);
+        let result = confirm(`Are you sure you want to delete the ${rowData.fileName} record?`);
+        console.log(`Delete Record: ${result}`);
 
         if (!result) {
             return;
@@ -103,9 +103,9 @@ export default class AssetsComponent extends Vue {
         let id = rowData.assetId;
 
         //delete record
-        axios.delete('/api/Assets/' + id)
+        axios.delete(`/api/Assets/${id}`)
         .then(response => {
-            console.log('Record ' + id + ' has been deleted!');
+            console.log(`Record ${id} has been deleted!`);
             //reload data
             this.$refs.vuetable.reload();
         })
