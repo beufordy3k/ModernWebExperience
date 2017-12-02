@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.ApplicationInsights.AspNetCore.Extensions;
@@ -113,7 +114,10 @@ namespace SL.WebExperience.Test.Web.Controllers
                 return BadRequest();
             }
 
+            asset.UpdatedWhen = DateTimeOffset.Now;
+
             _context.Entry(asset).State = EntityState.Modified;
+            _context.Entry(asset).Property(p => p.CreatedWhen).IsModified = false;
 
             try
             {

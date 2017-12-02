@@ -2,11 +2,7 @@
 import { Component } from 'vue-property-decorator';
 import { component as VueFormGenerator, validators } from 'vue-form-generator';
 import axios from 'axios'
-
-interface ICountryData {
-    id: number;
-    name: string;
-}
+import { uuid } from 'vue-uuid'
 
 @Component({
     components: {
@@ -14,12 +10,9 @@ interface ICountryData {
     }
 })
 export default class NewAssetComponent extends Vue {
-    model: {};
+    model: any;
     schema: any;
     formOptions: {};
-
-    countries: Array<any>;
-    mimeTypes: Array<any>;
 
     constructor() {
         super();
@@ -27,14 +20,12 @@ export default class NewAssetComponent extends Vue {
         this.model = {};
         this.formOptions = {};
 
-        this.countries = [];
-        
         this.schema = {
             fields: [
                 {
                     type: 'input',
                     inputType: 'text',
-                    label: 'ID (disabled text field)',
+                    label: 'ID',
                     model: 'id',
                     readonly: true,
                     disabled: true
@@ -45,14 +36,16 @@ export default class NewAssetComponent extends Vue {
                     model: 'fileName',
                     placeholder: 'Name of the file',
                     featured: true,
-                    required: true
+                    required: true,
+                    validator: validators.string
                 }, {
                     type: 'input',
                     inputType: 'text',
                     label: 'Created By',
                     model: 'createdBy',
                     placeholder: 'Creator of the file',
-                    required: true
+                    required: true,
+                    validator: validators.string
                 }, {
                     type: 'input',
                     inputType: 'text',
@@ -74,73 +67,62 @@ export default class NewAssetComponent extends Vue {
                     type: 'select',
                     label: 'Country',
                     model: 'countryId',
-                    values: this.countries,
-                    validator: validators.required
+                    values: [],
+                    required: true,
+                }, {
+                    type: 'select',
+                    label: 'Mime Type',
+                    model: 'mimeTypeId',
+                    values: [],
+                    required: true,
                 }
             ]
         };
 
-        this.getCountries((data) => {
+        this.getListData('/api/Countries', (data) => {
             this.schema.fields[5].values = data; //TODO: Fix this, it's a bad way to go.
         });
 
-        /*
-        this.schema.fields[5].values = this.countries;
-       , {
-           type: 'input',
-           inputType: 'password',
-           label: 'Password',
-           model: 'password',
-           min: 6,
-           required: true,
-           hint: 'Minimum 6 characters',
-           validator: VueFormGenerator.validators.string
-       }, {
-           type: 'select',
-           label: 'Skills',
-           model: 'skills',
-           values: ['Javascript', 'VueJS', 'CSS3', 'HTML5']
-       }, {
-           type: 'input',
-           inputType: 'email',
-           label: 'E-mail',
-           model: 'email',
-           placeholder: "User's e-mail address"
-       }, {
-           type: 'checkbox',
-           label: 'Status',
-           model: 'status',
-           default: true
-       }
-       */
+        this.getListData('/api/MimeTypes', (data) => {
+            this.schema.fields[6].values = data; //TODO: Fix this, it's a bad way to go.
+        });
     }
 
-    beforeMount() {
-        console.log('newasset before mount');
-    }        
-        
-    created() {
-        console.log('newasset created');
-    }
-
-    mounted() {
-        console.log('newasset mount');
-    }
-
-    getCountries(callback: (data: any) => void) {
+    getListData(endpoint: string, callback: (data: any) => void) {
         try {
             //TODO: Cache these
-            axios.get('/api/Countries')
+            axios.get(endpoint)
                .then(response => {
                    //console.log(response.data);
-                   console.log("retrieved countries data: " + response.data.length)
+                   console.log("retrieved data: " + response.data.length)
                    callback(response.data);
 
                })
-               .catch((e) => console.log(e));
+               .catch(e => console.log(e));
         }
         catch (error) {
             console.log(error);
         }
     }
+
+    testAlert() {
+        console.log('you got it.')
+    }
+
+    createNewAsset() {
+        let data = this.model;
+
+        data.version = '1';
+        data.assetKey = uuid.v4();
+
+        console.log('New asset creation: ' + JSON.stringify(data));
+        axios.post('/api/Assets', data)
+        .then(response => {
+            console.log('Response: ' + response.status + ':' + response.statusText);
+            this.$router.push('/assetmanagement');
+        })
+        .catch(e => {
+            console.log(e);
+        });
+    }    
 }

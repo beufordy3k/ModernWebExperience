@@ -12,8 +12,8 @@ const routes = [
         component: require('./components/assetmanagement/assethome.vue.html'),
         children: [
             { path: '', component: require('./components/assetmanagement/assets.vue.html') },
-            { path: 'new', component: require('./components/assetmanagement/newasset.vue.html') },
-            { path: 'edit', component: require('./components/assetmanagement/editasset.vue.html') }
+            { path: 'new', component: require('./components/assetmanagement/newasset.vue.html'), props: true },
+            { path: ':id/edit', name: 'edit-asset', component: require('./components/assetmanagement/editasset.vue.html'), props: true }
         ]
     }
 ];

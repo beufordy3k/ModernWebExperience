@@ -3,6 +3,7 @@ import { Component } from 'vue-property-decorator';
 import { Vuetable, VuetablePagination, VuetablePaginationInfo } from 'vuetable-2';
 import VueRouter from 'vue-router';
 import VueEvents from 'vue-events';
+import axios from 'axios'
 
 Vue.use(Vuetable);
 Vue.use(VueEvents);
@@ -87,14 +88,31 @@ export default class AssetsComponent extends Vue {
     }
 
     editRow(rowData : any) {
-        alert('You clicked edit on' + JSON.stringify(rowData));
-        this.$router.push('/assetmanagement/edit'); //pass data
+        console.log('data: ' + JSON.stringify(rowData));
+        this.$router.push({name: 'edit-asset', params: {id: rowData.assetId}}); //pass data
     }
     
     deleteRow(rowData : any) {
-        alert('You clicked delete on' + JSON.stringify(rowData));
+        let result = confirm('Are you sure you want to delete the ' + rowData.fileName + ' record?');
+        console.log('Delete Record: ' + result);
+
+        if (!result) {
+            return;
+        }
+
+        let id = rowData.assetId;
+
         //delete record
-        //reload data
+        axios.delete('/api/Assets/' + id)
+        .then(response => {
+            console.log('Record ' + id + ' has been deleted!');
+            //reload data
+            this.$refs.vuetable.reload();
+        })
+        .catch(e => {
+            console.log(e);
+        });
+        
     }
 
     onFilterSet(filterText : string) {
@@ -104,7 +122,6 @@ export default class AssetsComponent extends Vue {
         }
 
         this.$nextTick(() => {
-
             this.$refs.vuetable.refresh();
         });
     }

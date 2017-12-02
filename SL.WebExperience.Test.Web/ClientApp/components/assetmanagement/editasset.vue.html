@@ -5,7 +5,11 @@
         <p>Update an existing Asset.</p>
         
 
-    </div>
+        <form @submit.prevent="updateAsset">
+                <asset-form ref="form" :initial-model="model" mode="edit"></asset-form>
+                <button class="btn btn-primary btn-sm">Update Asset</button>
+            </form>
+        </div>
 </template>
 
 <script src="./editasset.ts"></script>

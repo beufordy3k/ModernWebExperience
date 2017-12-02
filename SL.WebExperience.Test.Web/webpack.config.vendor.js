@@ -22,7 +22,8 @@ module.exports = (env) => {
                 'semantic-ui-css/semantic.css',
                 'vue-events',
                 'vue-form-generator',
-                'axios'
+                'axios',
+                'vue-uuid'
             ],
         },
         module: {
