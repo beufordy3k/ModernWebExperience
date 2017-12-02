@@ -4,12 +4,13 @@
 
         <p>Data from the Asset data store.</p>
         
-        <router-link to="/assetmanagement/new">
-            <button class="btn btn-success btn-sm" >
-                <span class="glyphicon glyphicon-plus"></span> Create New
-            </button>
-        </router-link>
-        
+        <div class="create-new">
+            <router-link to="/assetmanagement/new">
+                <button class="btn btn-success btn-sm" >
+                    <span class="glyphicon glyphicon-plus"></span> Create New
+                </button>
+            </router-link>
+        </div>
         <!--<filter-bar></filter-bar>-->
 
         <vuetable ref="vuetable"
@@ -37,4 +38,5 @@
     </div>
 </template>
 
+<style src="./assets.css" />
 <script src="./assets.ts"></script>
