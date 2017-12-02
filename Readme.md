@@ -92,7 +92,9 @@ An ASP.NET Core 2.0 MVC SPA application utilizing Vue.js 2 and a Web API endpoin
 * API
   * Secure endpoint with authentication & authorization (oath2, jwt, etc.)
   * Add versioning
+  * Switch to using `key` values insted of `id` values
   * Add caching layer(s)
+  * Evaluate paging token implementation
 
 * Web App
   * Structure
@@ -110,3 +112,6 @@ An ASP.NET Core 2.0 MVC SPA application utilizing Vue.js 2 and a Web API endpoin
     * Create devops pipeline for CI & CD into cloud assets (VSTS, Jenkins, TeamCity)
 
 ## SQL Schema
+
+<http://svgshare.com/i/49a.svg>
+<a href="http://svgshare.com/i/49a.svg"><img src="http://svgshare.com/i/49a.svg" width="100%" height="1024"></a>
