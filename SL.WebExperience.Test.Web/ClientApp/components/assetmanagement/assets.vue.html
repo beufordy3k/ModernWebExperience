@@ -4,14 +4,32 @@
 
         <p>Data from the Asset data store.</p>
         
-        <div class="create-new">
-            <router-link to="/assetmanagement/new">
-                <button class="btn btn-success btn-sm" >
-                    <span class="glyphicon glyphicon-plus"></span> Create New
-                </button>
-            </router-link>
+        <div class="row">
+            <div class="col-md-8 col-xs-12">
+                <div class="create-new">
+                    <router-link to="/assetmanagement/new">
+                        <button class="btn btn-success btn-sm" >
+                            <span class="glyphicon glyphicon-plus"></span> Create New
+                        </button>
+                    </router-link>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12 text-right">
+                <div class="row"> 
+                    <div class="col-md-10 col-xs-12">
+                        Records per Page: 
+                    </div>
+                    <div class="col-md-2 col-xs-12">
+                        <select v-model="selectedPageOption" class="form-control">
+                            <option v-for="option in pageOptions" :value="option.value">
+                            {{ option.text }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
-        <!--<filter-bar></filter-bar>-->
+    <!--<filter-bar></filter-bar>-->
 
         <vuetable ref="vuetable"
                   api-url="/api/Assets"
@@ -19,6 +37,7 @@
                   :query-params="queryParams"
                   :sort-order="sortOrder"
                   :append-params="moreParams"
+                  :per-page="perPage"
                   pagination-path="paging"
                   @vuetable:pagination-data="onPaginationData">
             <template slot="actions" scope="props">
