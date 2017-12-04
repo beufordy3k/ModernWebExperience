@@ -5,6 +5,7 @@
       <conditions logicalGrouping="MatchAll">
         <add input="{REQUEST_FILENAME}" matchType="IsFile" negate="true" />
         <add input="{REQUEST_FILENAME}" matchType="IsDirectory" negate="true" />
+        <add input="{REQUEST_URI}" negate="true" pattern="^/api/*" />
       </conditions>
       <action type="Rewrite" url="/" />
     </rule>
