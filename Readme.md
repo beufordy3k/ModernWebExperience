@@ -105,7 +105,7 @@ An ASP.NET Core 2.0 MVC SPA application utilizing Vue.js 2 and a Web API endpoin
     * Evaluate use of queues for updates to records
   * UI
     * Add country & mime type filtering
-    * Add page size input
+    * ~~Add page size input~~ (Added basic functionality)
     * Add user account managment
   * Build
     * Move build steps out of .csproj for integration into devops pipeline (gulp or other)
