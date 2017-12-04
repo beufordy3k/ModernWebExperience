@@ -114,4 +114,4 @@ An ASP.NET Core 2.0 MVC SPA application utilizing Vue.js 2 and a Web API endpoin
 ## SQL Schema
 
 <http://svgshare.com/i/49a.svg>
-<a href="http://svgshare.com/i/49a.svg"><img src="http://svgshare.com/i/49a.svg" width="100%" height="1024"></a>
+![Database Diagram](http://svgshare.com/i/49a.svg)
