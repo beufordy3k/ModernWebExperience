@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import { Component } from 'vue-property-decorator';
+import { Component, Watch } from 'vue-property-decorator';
 import { Vuetable, VuetablePagination, VuetablePaginationInfo } from 'vuetable-2';
 import VueRouter from 'vue-router';
 import VueEvents from 'vue-events';
@@ -36,6 +36,10 @@ export default class AssetsComponent extends Vue {
     moreParams: object;
     sortOrder: Array<any>;
 
+    selectedPageOption: number = 10;
+
+    pageOptions: Array<any>;
+
     constructor() {
         super();
         this.fields = [
@@ -68,6 +72,12 @@ export default class AssetsComponent extends Vue {
 
         this.queryParams = { sort: 'sort', page: 'pageNumber', perPage: 'pageSize' };
 
+        this.pageOptions = [
+            {text: "10", value: 10},
+            {text: "25", value: 25},
+            {text: "50", value: 50},
+        ];
+
         this.moreParams = {};
         this.sortOrder = [
             {
@@ -76,6 +86,17 @@ export default class AssetsComponent extends Vue {
                 direction: 'asc'
             }
         ];
+    }
+
+    @Watch('perPage', { immediate: false, deep: false })
+    onPerPageChanged(val: number, oldVal: number) {
+        console.log(`per page: ${val}`);
+
+        this.$nextTick(() => {this.$refs.vuetable.refresh()});
+    }
+
+    get perPage() {
+        return this.selectedPageOption;
     }
 
     onPaginationData(paginationData : IPaginationData) {
@@ -112,7 +133,6 @@ export default class AssetsComponent extends Vue {
         .catch(e => {
             console.log(e);
         });
-        
     }
 
     onFilterSet(filterText : string) {

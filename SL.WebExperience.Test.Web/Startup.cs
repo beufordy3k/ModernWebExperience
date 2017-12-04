@@ -1,5 +1,7 @@
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -62,6 +64,14 @@ namespace SL.WebExperience.Test.Web
             app.UseStaticFiles();
 
             app.UseCors("AllowAllOrigins");
+
+            using (var iisUrlRewriteStream = File.OpenText("./IISUrlRewrite.xml"))
+            {
+                var options = new RewriteOptions()
+                    .AddIISUrlRewrite(iisUrlRewriteStream);
+
+                app.UseRewriter(options);
+            }
 
             app.UseMvc(routes =>
             {
