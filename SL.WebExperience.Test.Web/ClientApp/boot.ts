@@ -5,6 +5,7 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
+//TODO: Add NotFoundComponent '*' path route for proper 404 handling
 const routes = [
     { path: '/', component: require('./components/home/home.vue.html') },
     {
