@@ -1,4 +1,4 @@
-# SL.WebExperience.Test
+# ModernWebExperience
 
 An ASP.NET Core 2.0 MVC SPA application utilizing Vue.js 2 and a Web API endpoint.
 
